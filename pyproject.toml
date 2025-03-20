@@ -3,7 +3,7 @@ name = "operation-pele-password"
 package-mode = false
 version = "0.1.0"
 description = ""
-authors = ["Rami Menai <rami@menai.me>"]
+authors = ["Rami && Bachir"]
 readme = "README.md"
 
 [tool.poetry.dependencies]

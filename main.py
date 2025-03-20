@@ -3,7 +3,7 @@ import numpy as np
 from scipy.io import wavfile
 
 # Load audio file
-sample_rate, data = wavfile.read("keyboard.wav")
+sample_rate, data = wavfile.read("audio/a.wav")
 
 # Create a time axis in seconds
 time = np.linspace(0, len(data) / sample_rate, num=len(data))
@@ -18,6 +18,7 @@ plt.title("Audio Waveform")
 
 # Compute the FFT of the audio signal
 fft_coeffs = np.fft.fft(data)
+print(fft_coeffs)
 # Only consider the positive frequencies (first half)
 fft_magnitude = np.abs(fft_coeffs)[: len(fft_coeffs) // 2]
 freqs = np.fft.fftfreq(len(data), d=1 / sample_rate)[: len(fft_coeffs) // 2]
