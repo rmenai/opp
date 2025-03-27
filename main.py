@@ -59,7 +59,7 @@ elif not filename.name.endswith("mono.wav"):
 #     fm = filename[:-4] + "_mono.wav"
 #     sound.export(fm, format="wav")
 
-frequency, data = wavfile.read("audio/a.wav")
+frequency, data = wavfile.read("audio/a3.wav")
 samples = data.shape[0]
 duration = samples / frequency
 

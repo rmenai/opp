@@ -7,7 +7,7 @@ from scipy.io import wavfile
 
 # Load audio file
 # files = [Path(file) for file in glob.glob("audio/stereo/*.wav")]
-files = [Path("audio/stereo/a_norm.wav"), Path("audio/stereo/n_norm.wav")]
+files = [Path("audio/stereo/a1.wav"), Path("audio/stereo/a2.wav"), Path("audio/stereo/a3.wav"), Path("audio/stereo/a4.wav"), Path("audio/stereo/a5.wav"), Path("audio/stereo/a6.wav"), Path("audio/stereo/a7.wav")]
 blacklist = []
 # blacklist = ["a_norm.wav", "n_norm.wav"]
 
