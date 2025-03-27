@@ -7,6 +7,7 @@ in
         with python-pkgs; [
           scipy
           matplotlib
+          pydub
         ]))
     ];
   }
