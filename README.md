@@ -1,4 +1,4 @@
-# [Operation Pele Password](./README.md) &middot; [![GitHub license]](./LICENSE)
+# [Operation Pele Password](./README.md) &middot; [![GitHub license]](./LICENSE) ![Test Action]
 
 Have you ever wanted to know what someone is typing just by listening to their
 keyboard? Well, now you can! You can now eavesdrop on somebody's typing just
@@ -41,3 +41,4 @@ Distributed under the MIT License. See [LICENSE](./LICENSE) for more information
 <!-- Shields.io links -->
 
 [gitHub license]: https://img.shields.io/badge/license-MIT-blue.svg
+[test action]: https://github.com/rmenai/operation-pele-password/actions/workflows/test.yaml/badge.svg
