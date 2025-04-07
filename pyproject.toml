@@ -1,18 +1,33 @@
 [tool.poetry]
 name = "operation-pele-password"
-package-mode = false
 version = "0.1.0"
-description = ""
+description = "Keyboard evesdropping"
 authors = ["Rami && Bachir"]
-readme = "README.md"
+package-mode = false
+license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.11"
-scipy = "^1.15.2"
+taskipy = "^1.14.1"
+pydantic = "^2.11.2"
+pydantic-settings = "^2.8.1"
 matplotlib = "^3.10.1"
-pip = "^25.0.1"
+scipy = "^1.15.2"
 pydub = "^0.25.1"
 
+[tool.poetry.group.dev.dependencies]
+colorlog = "^6.9.0"
+coverage = "^7.8.0"
+pytest = "^8.3.5"
+python-dotenv = "^1.1.0"
+pre-commit = "^4.2.0"
+black = "^25.1.0"
+
+[tool.taskipy.tasks]
+start = "python -m app"
+test = "coverage run -m pytest tests/"
+report = "coverage report"
+lint = "pre-commit run --all-files"
 
 [build-system]
 requires = ["poetry-core"]
