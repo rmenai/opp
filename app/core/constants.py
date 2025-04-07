@@ -55,8 +55,8 @@ class Keys(BaseModel):
 class Constants(BaseModel):
     """The app constants."""
 
-    SAMPLE_RATE = 44100
-    CHANNELS = 2
+    SAMPLE_RATE: int = 44100
+    CHANNELS: int = 2
 
     keys: Keys = Keys()
 
