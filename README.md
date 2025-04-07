@@ -2,7 +2,7 @@
 
 Have you ever wanted to know what someone is typing just by listening to their
 keyboard? Well, now you can! You can now eavesdrop on somebody's typing just
-from the recording of their keys
+from the recording of their keys.
 
 <!-- Table of Contents -->
 
@@ -29,15 +29,14 @@ This approach should work for either provided files or live recorded audio.
 ## Features
 
 * Live audio recording
+* Automatic audio splitting
+* Key classification
 
 
 ## License
 
 Distributed under the MIT License. See [LICENSE](./LICENSE) for more information.
 
-## Contact
-
-Rami Menai - [@menai_rami][twitter] - [rami.menai@outlook.com][email]
 
 <!-- Packages Links -->
 
