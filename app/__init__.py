@@ -31,9 +31,7 @@ datefmt = "%H:%M:%S"
 try:
     from colorlog import ColoredFormatter
 
-    console_handler.setFormatter(
-        ColoredFormatter(fmt=f"%(log_color)s{fmt}", datefmt=datefmt)
-    )
+    console_handler.setFormatter(ColoredFormatter(fmt=f"%(log_color)s{fmt}", datefmt=datefmt))
 except ModuleNotFoundError:
     pass
 
@@ -42,9 +40,6 @@ root = logging.getLogger()
 if root.handlers:
     for handler in root.handlers:
         root.removeHandler(handler)
-
-# Silence irrelevant loggers.
-# logging.getLogger("asyncio").setLevel(logging.ERROR)
 
 # Setup new logging configuration.
 logging.basicConfig(

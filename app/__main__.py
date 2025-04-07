@@ -1,4 +1,6 @@
 import logging
 
 log = logging.getLogger(__name__)
-log.info("Project successful")
+
+if __name__ == "__main__":
+    log.info("Project successful")

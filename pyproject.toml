@@ -14,6 +14,7 @@ pydantic-settings = "^2.8.1"
 matplotlib = "^3.10.1"
 scipy = "^1.15.2"
 pydub = "^0.25.1"
+sounddevice = "^0.5.1"
 
 [tool.poetry.group.dev.dependencies]
 colorlog = "^6.9.0"
@@ -27,6 +28,10 @@ black = "^25.1.0"
 start = "python -m app"
 test = "pytest tests/"
 lint = "pre-commit run --all-files"
+
+[tool.black]
+line-length = 120
+skip-string-normalization = true
 
 [build-system]
 requires = ["poetry-core"]
