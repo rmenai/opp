@@ -9,7 +9,6 @@ from the recording of their keys.
 - [Usage](#usage)
 - [Features](#features)
 - [License](#license)
-- [Contact](#contact)
 
 ## Usage
 
@@ -38,21 +37,6 @@ This approach should work for either provided files or live recorded audio.
 Distributed under the MIT License. See [LICENSE](./LICENSE) for more information.
 
 
-<!-- Packages Links -->
-
-[.env]: https://pypi.org/project/python-dotenv/
-[colorlog]: https://pypi.org/project/colorlog/
-[docker]: https://www.docker.com/
-[dotenv]: https://pypi.org/project/python-dotenv/
-[flake8]: https://flake8.pycqa.org/en/latest/
-[poetry]: https://python-poetry.org/
-[pre-commit]: https://pre-commit.com/
-[pydantic]: https://pydantic-docs.helpmanual.io/
-[pytest]: https://docs.pytest.org/en/6.2.x/
-
-<!-- Repository links -->
-
-[community standards]: https://github.com/boilercodes/python/community
 
 <!-- Shields.io links -->
 

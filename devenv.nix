@@ -20,4 +20,8 @@
     mdsh.enable = true;
     black.enable = true;
   };
+
+  enterTest = ''
+    poetry run task test
+  '';
 }
