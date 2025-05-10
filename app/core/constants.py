@@ -57,6 +57,10 @@ class Constants(BaseModel):
 
     SAMPLE_RATE: int = 44100
     CHANNELS: int = 2
+    LENGTH: int = 20_000
+
+    PROMINENCE: float = 1
+    DISTANCE: float = 0.1  # In seconds
 
     keys: Keys = Keys()
 

@@ -3,6 +3,9 @@ import os
 from datetime import datetime
 from pathlib import Path
 
+import matplotlib
+from uvicorn.config import LOGGING_CONFIG
+
 from app.core import settings
 
 # Set up file logging.
@@ -48,3 +51,9 @@ logging.basicConfig(
     level=logging.DEBUG,
     handlers=[console_handler, file_handler],
 )
+
+# Configure uvicorn loggers.
+LOGGING_CONFIG["loggers"]["uvicorn.access"]["propagate"] = True
+LOGGING_CONFIG["loggers"]["uvicorn.access"].pop("handlers", None)
+
+matplotlib.use("TkAgg")

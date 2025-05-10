@@ -1,5 +1,6 @@
 import logging
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 from app.core import constants
@@ -66,6 +67,23 @@ class AudioData:
 class AudioSample:
     """Stores processed labeled audio samples"""
 
-    def __init__(self, processed_audio: AudioData, features: dict):
-        self.processed_audio = processed_audio
-        self.features = features
+    def __init__(self, audio: AudioData, fft: np.ndarray, label: str):
+        self.audio = audio
+        self.fft = fft
+        self.label = label
+
+    def visualize(self):
+        plt.figure(figsize=(10, 4))
+
+        if self.audio.data.ndim == 1:
+            plt.plot(self.audio.data, label="Mono")
+        else:
+            for i in range(self.audio.data.shape[1]):
+                plt.plot(self.audio.data[:, i], label=f"Channel {i+1}")
+
+        plt.title(f"Audio Waveform ({self.label})")
+        plt.xlabel("Data Points")
+        plt.ylabel("Amplitude")
+        plt.legend()
+        plt.tight_layout()
+        plt.show()

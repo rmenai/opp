@@ -1,9 +1,11 @@
 import logging
+from pathlib import Path
 
 import sounddevice as sd
-from core.audio import AudioData
-from core.constants import constants
 from scipy.io import wavfile
+
+from app.core import constants
+from app.core.audio import AudioData
 
 log = logging.getLogger(__name__)
 
@@ -11,12 +13,12 @@ log = logging.getLogger(__name__)
 class AudioRecorder:
     """Captures audio, handles io."""
 
-    def from_file(self, filepath: str):
+    def from_file(self, file: Path):
         """
         Load audio from a WAV file using SciPy.
         """
-        sample_rate, data = wavfile.read(filepath)
-        log.info(f"Imported {filepath}")
+        sample_rate, data = wavfile.read(file)
+        log.info(f"Imported {file}")
         return AudioData(data, sample_rate)
 
     def record_live(self, duration: float):
