@@ -12,5 +12,15 @@ export default defineNuxtConfig({
     plugins: [tailwindcss()],
   },
 
-  modules: ["@nuxt/eslint", "@nuxt/fonts", "@nuxt/icon", "@nuxt/test-utils", "@nuxt/ui", "@nuxt/image"],
+  modules: [
+    "@nuxt/eslint",
+    "@nuxt/fonts",
+    "@nuxt/icon",
+    "@nuxt/test-utils",
+    "@nuxt/ui",
+    "@nuxt/image",
+    "@pinia/nuxt",
+    "@nuxt/test-utils/module",
+    "@vueuse/nuxt",
+  ],
 });
