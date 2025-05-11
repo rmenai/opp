@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "operation-pele-password"
+name = "opp"
 version = "0.1.0"
 description = "Keyboard evesdropping"
 authors = ["Rami && Bachir"]
