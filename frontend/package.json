@@ -7,19 +7,30 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.html --max-warnings 0 --ignore-pattern .gitignore",
+    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts,.html --fix --ignore-pattern .gitignore"
   },
   "dependencies": {
-    "@nuxt/eslint": "1.3.0",
     "@nuxt/fonts": "0.11.3",
     "@nuxt/icon": "1.12.0",
     "@nuxt/image": "1.10.0",
     "@nuxt/test-utils": "3.18.0",
     "@nuxt/ui": "3.1.1",
-    "eslint": "^9.26.0",
+    "@tailwindcss/vite": "^4.1.6",
     "nuxt": "^3.17.2",
+    "tailwindcss": "^4.1.6",
     "typescript": "^5.8.3",
     "vue": "^3.5.13",
     "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@nuxt/eslint": "1.3.0",
+    "@tailwindcss/language-server": "^0.14.16",
+    "eslint": "^9.26.0",
+    "eslint-config-prettier": "^10.1.5",
+    "eslint-plugin-prettier": "^5.4.0",
+    "prettier": "^3.5.3",
+    "prettier-plugin-tailwindcss": "^0.6.11"
   }
 }
