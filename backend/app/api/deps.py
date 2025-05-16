@@ -6,7 +6,9 @@ from app.core import settings
 from app.supabase.session import supabase
 from supabase import Client
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.api.endpoint}/login", scheme_name="JWT")
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl=f"{settings.api.endpoint}/auth/login", scheme_name="JWT"
+)
 
 
 def get_supabase() -> Client:

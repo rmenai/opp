@@ -3,7 +3,6 @@ import os
 from datetime import datetime
 from pathlib import Path
 
-import matplotlib
 from uvicorn.config import LOGGING_CONFIG
 
 from app.core import settings
@@ -34,7 +33,9 @@ datefmt = "%H:%M:%S"
 try:
     from colorlog import ColoredFormatter
 
-    console_handler.setFormatter(ColoredFormatter(fmt=f"%(log_color)s{fmt}", datefmt=datefmt))
+    console_handler.setFormatter(
+        ColoredFormatter(fmt=f"%(log_color)s{fmt}", datefmt=datefmt)
+    )
 except ModuleNotFoundError:
     pass
 
@@ -55,5 +56,3 @@ logging.basicConfig(
 # Configure uvicorn loggers.
 LOGGING_CONFIG["loggers"]["uvicorn.access"]["propagate"] = True
 LOGGING_CONFIG["loggers"]["uvicorn.access"].pop("handlers", None)
-
-matplotlib.use("TkAgg")

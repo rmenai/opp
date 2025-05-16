@@ -42,10 +42,13 @@ in {
         package = pkgs.python313Full;
         directory = "./backend";
 
-        poetry = {
+        venv = {
           enable = true;
-          activate.enable = true;
-          install.enable = true;
+        };
+
+        uv = {
+          enable = true;
+          sync.enable = true;
         };
       };
 
@@ -78,35 +81,35 @@ in {
 
     processes = {
       supabase = lib.mkIf (config.profile == "backend" || config.profile == "full") {
-        exec = "supabase start";
+        exec = "poe supabase";
         process-compose = {
           working_dir = "./backend";
         };
       };
 
       celery = lib.mkIf (config.profile == "backend" || config.profile == "full") {
-        exec = "poetry run task celery";
+        exec = "poe celery";
         process-compose = {
           working_dir = "./backend";
         };
       };
 
       flower = lib.mkIf (config.profile == "backend" || config.profile == "full") {
-        exec = "poetry run task flower";
+        exec = "poe flower";
         process-compose = {
           working_dir = "./backend";
         };
       };
 
       api = lib.mkIf (config.profile == "backend" || config.profile == "full") {
-        exec = "poetry run task api";
+        exec = "poe api";
         process-compose = {
           working_dir = "./backend";
         };
       };
 
       website = lib.mkIf (config.profile == "frontend" || config.profile == "full") {
-        exec = "bun --bun run dev -o";
+        exec = "bun --bun run dev";
         process-compose = {
           working_dir = "./frontend";
         };
@@ -114,7 +117,7 @@ in {
     };
 
     enterTest = ''
-      cd backend && poetry run task test
+      cd backend && poe test
     '';
   };
 }
