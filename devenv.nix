@@ -28,6 +28,9 @@ in {
       PLAYWRIGHT_LAUNCH_OPTIONS_EXECUTABLE_PATH = "${pkgs-playwright.playwright.browsers}/chromium-${chromium-rev}/chrome-linux/chrome";
     };
 
+    devcontainer.enable = true;
+    difftastic.enable = true;
+
     packages = with pkgs; [
       ffmpeg
       portaudio
