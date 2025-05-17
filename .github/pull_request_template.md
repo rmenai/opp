@@ -13,15 +13,6 @@ What types of changes does your code introduce?
 Describe your changes here and explain why we should accept this pull request. If it fixes a bug or resolves a feature
 request, be sure to link to that issue.
 
-## Checklist
-
-*Put an `x` in the boxes that apply.*
-
-- [ ] I have read and followed the [CONTRIBUTING.md](https://github.com/boilercodes/python/blob/main/CONTRIBUTING.md)
-  doc.
-- [ ] Lint and unit tests pass locally with my changes.
-- [ ] I have added necessary documentation (if appropriate).
-
 ## Additional context
 
 Add any other context or screenshots here.
