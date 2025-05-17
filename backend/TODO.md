@@ -13,7 +13,7 @@
 - Redo supabase database, but this time with migrations
 - Prepare Supabase dev client
 - Change .env loading, separate to .env.dev, .env.test
-- Fix linting and add more pre-commit hooks
+- ~~Fix linting and add more pre-commit hooks~~
 
 ```sh
 supabase link --project-ref myapp-test

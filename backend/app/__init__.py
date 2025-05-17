@@ -1,7 +1,7 @@
 """Define log settings and such."""
 
+import datetime
 import logging.handlers
-from datetime import datetime
 from pathlib import Path
 
 from uvicorn.config import LOGGING_CONFIG
