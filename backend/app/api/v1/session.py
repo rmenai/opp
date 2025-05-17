@@ -124,7 +124,7 @@ async def list_sessions(
 async def get_processing_session_details(
     current_user: Annotated[User, Depends(get_user)],
     supabase: Annotated[Client, Depends(get_supabase)],
-    session_id: Annotated[uuid.UUID, Path(description="The ID of the session to retrieve")] = ...,
+    session_id: Annotated[uuid.UUID, Path(description="The ID of the session to retrieve")],
 ) -> schemas.SessionCreationResponse:
     """
     Get details of a specific processing session.
