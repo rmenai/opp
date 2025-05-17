@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "opp"
 version = "0.1.0"
-description = "Keyboard evesdropping"
+description = "Keyboard eavesdropping"
 authors = ["Rami && Bachir"]
 package-mode = false
 license = "MIT"
