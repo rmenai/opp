@@ -78,7 +78,6 @@ in {
       eslint.enable = true;
       hadolint.enable = true;
       markdownlint.enable = true;
-      name-tests-test.enable = true;
       ripsecrets.enable = true;
       ruff.enable = true;
       ruff-format.enable = true;
