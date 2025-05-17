@@ -1,3 +1,5 @@
+"""Route all routes to the app."""
+
 from fastapi import APIRouter
 
 from app.api.v1 import auth, session, sync

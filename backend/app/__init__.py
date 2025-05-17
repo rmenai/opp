@@ -1,5 +1,6 @@
+"""Define log settings and such."""
+
 import logging.handlers
-import os
 from datetime import datetime
 from pathlib import Path
 
@@ -8,9 +9,10 @@ from uvicorn.config import LOGGING_CONFIG
 from app.core import settings
 
 # Set up file logging.
+now = datetime.datetime.now(tz=datetime.UTC)
 log_dir = Path(f"{__name__}/logs")
-log_file = log_dir / f"{datetime.now().strftime('%d-%m-%Y')}.log"
-os.makedirs(log_dir, exist_ok=True)
+log_file = log_dir / f"{now.strftime('%d-%m-%Y')}.log"
+Path.mkdir(log_dir, exist_ok=True, parents=True)
 
 # File handler rotates logs every 5 MB.
 file_handler = logging.handlers.RotatingFileHandler(
@@ -29,13 +31,11 @@ console_handler.setLevel(logging.DEBUG if settings.debug else logging.INFO)
 fmt = "%(asctime)s - %(name)s %(levelname)s: %(message)s"
 datefmt = "%H:%M:%S"
 
-# Add colors for logging if available.
 try:
     from colorlog import ColoredFormatter
 
-    console_handler.setFormatter(
-        ColoredFormatter(fmt=f"%(log_color)s{fmt}", datefmt=datefmt)
-    )
+    # Add colors for logging if available.
+    console_handler.setFormatter(ColoredFormatter(fmt=f"%(log_color)s{fmt}", datefmt=datefmt))
 except ModuleNotFoundError:
     pass
 

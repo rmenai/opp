@@ -1,5 +1,8 @@
+"""Handle user authentication."""
+
 import datetime
 import logging
+from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Body, Depends, HTTPException, status
@@ -8,29 +11,26 @@ from gotrue import User
 
 from app import schemas
 from app.api.deps import get_supabase, get_user
-from supabase import Client, PostgrestAPIResponse
+from supabase import Client
 
 log = logging.getLogger(__name__)
 
 router = APIRouter()
 
 
-@router.post("/auth/login", response_model=schemas.RegisterResponse)
+@router.post("/auth/login")
 def login(
-    req: OAuth2PasswordRequestForm = Depends(), supabase: Client = Depends(get_supabase)
-):
+    req: Annotated[OAuth2PasswordRequestForm, Depends()],
+    supabase: Annotated[Client, Depends(get_supabase)],
+) -> schemas.RegisterResponse:
     """
     If a user with this email/password exists, log them in.
+
     Returns a JWT for authenticated calls.
     """
-    try:
-        log.debug(f"Signing in {req.username}...")
-        signin = supabase.auth.sign_in_with_password(
-            {"email": req.username, "password": req.password}
-        )
-        session = signin.session
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    log.debug("Signing in %s...", req.username)
+    signin = supabase.auth.sign_in_with_password({"email": req.username, "password": req.password})
+    session = signin.session
 
     if session is None:
         raise HTTPException(status_code=400, detail="Authentication failed")
@@ -42,58 +42,40 @@ def login(
     )
 
 
-@router.post("/auth/register", response_model=schemas.RegisterResponse)
+@router.post("/auth/register")
 def register(
-    req: OAuth2PasswordRequestForm = Depends(), supabase: Client = Depends(get_supabase)
-):
+    req: Annotated[OAuth2PasswordRequestForm, Depends()],
+    supabase: Annotated[Client, Depends(get_supabase)],
+) -> schemas.RegisterResponse:
     """
     Create the user and then log them in.
+
     Must provide an email and not a username.
     Returns a JWT for authenticated calls.
     """
-    try:
-        log.debug(f"Registering {req.username}...")
-        signup = supabase.auth.sign_up(
-            {"email": req.username, "password": req.password}
-        )
-        session = signup.session
-        user = signup.user
+    log.debug("Registering %s...", req.username)
+    signup = supabase.auth.sign_up({"email": req.username, "password": req.password})
+    session = signup.session
+    user = signup.user
 
-        if user is None or session is None:
-            log.warning(
-                f"User object or session is None after sign_up for {req.username}. User might need email confirmation."
-            )
+    if user is None or session is None:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Registration failed.")
 
-            if user is None:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Registration failed: Could not create user.",
-                )
+    now = datetime.datetime.now(datetime.UTC)
 
-        now = datetime.datetime.now(datetime.timezone.utc)
+    profile_to_create = schemas.UserProfileCreate(
+        user_id=UUID(user.id),
+        created_at=now,
+        updated_at=now,
+    )
 
-        profile_to_create = schemas.UserProfileCreate(
-            user_id=UUID(user.id), created_at=now, updated_at=now
-        )
-        payload = profile_to_create.model_dump(mode="json")
+    payload = profile_to_create.model_dump(mode="json")
 
-        log.debug(f"Creating profile for user {user.id} with data: {payload}")
+    log.debug("Creating profile for user %s with data: %s", user.id, payload)
 
-        try:
-            response = supabase.table("profiles").insert(payload).execute()
-
-            if response.data is None and response.error:
-                log.error(
-                    f"Failed to create profile for user {user.id}: {response.error.message if response.error else 'Unknown error'}"
-                )
-
-        except Exception as e:
-            log.error(
-                f"Database exception while creating profile for user {user.id}: {e}"
-            )
-
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    response = supabase.table("profiles").insert(payload).execute()
+    if not response:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Profile creation failed.")
 
     if session is None:
         raise HTTPException(status_code=400, detail="Registration failed")
@@ -105,96 +87,47 @@ def register(
     )
 
 
-@router.get("/me", response_model=schemas.UserProfileResponse)
+@router.get("/me")
 async def read_user_profile(
-    user: User = Depends(get_user), supabase: Client = Depends(get_supabase)
-):
-    """Reads the user data."""
-    try:
-        profile_response: PostgrestAPIResponse = (
-            supabase.table("profiles")
-            .select("*")
-            .eq("user_id", user.id)
-            .single()
-            .execute()
-        )
+    user: Annotated[User, Depends(get_user)],
+    supabase: Annotated[Client, Depends(get_supabase)],
+) -> schemas.UserProfileResponse:
+    """Read the user data."""
+    response = supabase.table("profiles").select("*").eq("user_id", user.id).single().execute()
+    if not response.data:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User profile not found.")
 
-        if not profile_response.data:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="User profile not found."
-            )
-
-        return schemas.UserProfileResponse(
-            **profile_response.data, email=str(user.email)
-        )
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        log.error(
-            f"Database exception while creating profile for user UUID {user.id}: {e}"
-        )
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Could not fetch user profile.",
-        )
-
-    # return schemas.UserProfileResponse(email="stop@mail.com")
+    return schemas.UserProfileResponse(
+        **response.data,
+        email=str(user.email),
+    )
 
 
-@router.put("/me", response_model=schemas.UserProfileResponse)
+@router.put("/me")
 async def update_user_profile(
-    update_payload: schemas.UserProfileUpdate = Body(...),
-    user: User = Depends(get_user),
-    supabase: Client = Depends(get_supabase),
-):
-    """Updates the user data with the given information."""
-
+    user: Annotated[User, Depends(get_user)],
+    supabase: Annotated[Client, Depends(get_supabase)],
+    update_payload: Annotated[schemas.UserProfileUpdate, Body()] = ...,
+) -> schemas.UserProfileResponse:
+    """Update the user data with the given information."""
     payload = update_payload.model_dump(mode="json", exclude_unset=True)
     if not payload:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, detail="No update data provided."
-        )
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No update data provided.")
 
-    now = datetime.datetime.now(datetime.timezone.utc)
+    now = datetime.datetime.now(datetime.UTC)
     payload["updated_at"] = now.isoformat()
 
-    try:
-        payload.pop("updated_at")
-        reponse = (
-            supabase.table("profiles").update(payload).eq("user_id", user.id).execute()
-        )
+    response = supabase.table("profiles").update(payload).eq("user_id", user.id).execute()
+    if not response:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User profile not found or update failed.")
 
-        if not reponse:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="User profile not found or update failed.",
-            )
+    log.info("Updated profile of user %s", user.id)
 
-        log.info(f"Updated profile of user {user.id}")
+    profile_response = supabase.table("profiles").select("*").eq("user_id", user.id).single().execute()
+    if not profile_response.data:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User profile not found.")
 
-        profile_response: PostgrestAPIResponse = (
-            supabase.table("profiles")
-            .select("*")
-            .eq("user_id", user.id)
-            .single()
-            .execute()
-        )
-
-        if not profile_response.data:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="User profile not found."
-            )
-
-        return schemas.UserProfileResponse(
-            **profile_response.data, email=str(user.email)
-        )
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        log.error(f"Database exception while creating profile for user {user.id}: {e}")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="Could not update user profile.",
-        )
+    return schemas.UserProfileResponse(
+        **profile_response.data,
+        email=str(user.email),
+    )

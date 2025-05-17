@@ -1,3 +1,5 @@
+"""Functions to process audio."""
+
 import logging
 
 import numpy as np
@@ -10,10 +12,10 @@ log = logging.getLogger(__name__)
 
 
 class AudioProcessor:
-    """Processes, cuts and normalizes audio"""
+    """Process, cut and normalize audio."""
 
     def average(self, samples: list[AudioSample]) -> AudioSample:
-        """Compute the average of multiple audio samples"""
+        """Compute the average of multiple audio samples."""
         sr = samples[0].audio.sample_rate
 
         lengths = [s.audio.data.shape[0] for s in samples]
@@ -38,18 +40,18 @@ class AudioProcessor:
         return AudioSample(audio=AudioData(mean_data, sr), fft=mean_fft, label=avg_label)
 
     def compute_fft(self, audio: AudioData) -> np.ndarray:
-        """Compute the fft"""
+        """Compute the fft."""
         return np.abs(np.fft.fft(audio.data))
 
     def find_peaks(self, audio: AudioData) -> list[int]:
-        """Automatically find the peaks in the audio"""
+        """Automatically find the peaks in the audio."""
         data = audio.data
 
         if data.ndim > 1:
             data = np.mean(data, axis=1)
 
         peaks, _ = find_peaks(data, prominence=constants.PROMINENCE, distance=audio.sample_rate * constants.DISTANCE)
-        log.info(f"Peaks: {peaks}")
+        log.info("Peaks: %s", peaks)
 
         if not peaks.any():
             log.error("No peaks found in signal")
@@ -58,34 +60,8 @@ class AudioProcessor:
 
         return find_peaks(audio.data, prominence=1)
 
-        # if audio.data.ndim > 1:
-        #     env = np.mean(np.abs(audio.data), axis=1)
-        # else:
-        #     env = np.abs(audio.data)
-        #
-        # threshold = None
-        # min_distance = 1
-        #
-        # if threshold is None:
-        #     threshold = env.mean() + 2 * env.std()
-        #
-        # peaks: list[int] = []
-        # last_peak = -min_distance
-        #
-        # for i in range(1, len(env) - 1):
-        #     if (
-        #         env[i] > threshold
-        #         and env[i] > env[i - 1]
-        #         and env[i] >= env[i + 1]
-        #         and (i - last_peak) >= min_distance
-        #     ):
-        #         peaks.append(i)
-        #         last_peak = i
-        #
-        # return peaks
-
     def resize(self, audio: AudioData, time: int) -> AudioData:
-        """Trims the audio data to a fixed length, either trimming or padding"""
+        """Trim the audio data to a fixed length, either trimming or padding."""
         center_sample = time
         target_samples = constants.LENGTH
         total_samples, n_channels = audio.data.shape
@@ -126,13 +102,16 @@ class AudioProcessor:
     def normalize(self, audio: AudioData) -> AudioData:
         """
         Resample the data to the target rate using SciPy's resample.
+
         Handles both mono and multi-channel data.
         """
         data = audio.data / np.max(np.abs(audio.data))
         return AudioData(data, audio.sample_rate)
 
-    def process(self, audio: AudioData, peaks: list[int] = [], label: str = "") -> list[AudioSample]:
-        """Processes, cuts and normlizes audio"""
+    def process(self, audio: AudioData, peaks: list[int] | None = None, label: str = "") -> list[AudioSample]:
+        """Process, cut and normalize audio."""
+        if peaks is None:
+            peaks = []
 
         audio = self.normalize(audio)
 

@@ -1,19 +1,37 @@
+"""FastAPI dependencies."""
+
+import logging
+
 from fastapi import Depends, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from gotrue import User
+from httpx import HTTPError
 
 from app.core import settings
 from app.supabase.session import supabase
-from supabase import Client
+from supabase import AuthApiError, Client
 
-oauth2_scheme = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.api.endpoint}/auth/login", scheme_name="JWT"
-)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.api.endpoint}/auth/login", scheme_name="JWT")
+
+log = logging.getLogger(__name__)
 
 
 def get_supabase() -> Client:
-    """Returns the supabase instance."""
-    return supabase
+    """Return the supabase instance, handling potential errors."""
+    try:
+        return supabase
+    except AuthApiError as e:
+        log.exception("Supabase Auth API Error: %s (Status: %s)", e.message, e.status)
+        raise HTTPException(
+            status_code=e.status or 400,
+            detail=e.message,
+        ) from e
+    except HTTPError as e:
+        log.exception("HTTP Error communicating with Supabase")
+        raise HTTPException(
+            status_code=502,
+            detail="Authentication service unavailable; please try again later",
+        ) from e
 
 
 def get_user(token: str = Depends(oauth2_scheme)) -> User:

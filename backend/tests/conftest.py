@@ -1,6 +1,6 @@
-"""This is a generated example file that is supposed to be modified."""
+"""A generated example file that is supposed to be modified."""
 
-from typing import Dict, Generator
+from collections.abc import Generator
 
 import pytest
 from fastapi.testclient import TestClient
@@ -16,7 +16,7 @@ def client() -> Generator:
 
 
 @pytest.fixture(scope="module")
-def random_product() -> Dict[str, str]:
+def random_product() -> dict[str, str]:
     """Return a product example."""
     return {
         "name": "Test Product",

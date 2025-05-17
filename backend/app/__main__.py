@@ -1,3 +1,5 @@
+"""Main API entrypoint."""
+
 import uvicorn
 from fastapi import FastAPI
 

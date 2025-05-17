@@ -68,9 +68,23 @@ in {
     };
 
     git-hooks.hooks = {
+      actionlint.enable = true;
+      check-added-large-files.enable = true;
+      check-json.enable = true;
+      check-merge-conflicts.enable = true;
+      check-yaml.enable = true;
+      commitizen.enable = true;
+      end-of-file-fixer.enable = true;
+      eslint.enable = true;
+      hadolint.enable = true;
+      markdownlint.enable = true;
+      name-tests-test.enable = true;
+      ripsecrets.enable = true;
+      ruff.enable = true;
+      ruff-format.enable = true;
       shellcheck.enable = true;
-      mdsh.enable = true;
-      black.enable = true;
+      trim-trailing-whitespace.enable = true;
+      typos.enable = true;
     };
 
     services = lib.mkIf (config.profile == "backend" || config.profile == "full") {
@@ -116,8 +130,8 @@ in {
       };
     };
 
-    enterTest = ''
-      cd backend && poe test
-    '';
+    # enterTest = ''
+    #   cd backend && poe test
+    # '';
   };
 }

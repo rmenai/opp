@@ -134,11 +134,12 @@ dmypy.json
 
 # pytype static type analyzer
 .pytype/
+.ruff_cache
 
 # Cython debug symbols
 cython_debug/
 
-# Jetbrain project settings
+# Jetbrains project settings
 .idea/
 
 # Logs
@@ -148,3 +149,5 @@ log.txt
 
 tempCodeRunnerFile.py
 tempCodeRunnerFile.python
+
+old/

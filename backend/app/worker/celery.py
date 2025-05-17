@@ -1,3 +1,5 @@
+"""Initialize to Celery worker."""
+
 import logging
 
 from celery import Celery

@@ -1,3 +1,5 @@
+"""Configuration for the app."""
+
 from functools import lru_cache
 from pathlib import Path
 
@@ -10,7 +12,7 @@ class API(BaseSettings):
 
     name: str = "FastAPI"
     endpoint: str = "/api/v1"
-    host: str = "0.0.0.0"
+    host: str = "127.0.0.1"
     port: int = 8080
 
     model_config = SettingsConfigDict(env_prefix="API_", env_file=".env", extra="allow")
@@ -26,7 +28,7 @@ class SupaBase(BaseSettings):
 
 
 class Celery(BaseSettings):
-    """The Celery settings/"""
+    """The Celery settings."""
 
     broker_url: str = "redis://127.0.0.1:6379/0"
     result_backend: str = "redis://127.0.0.1:6379/0"
@@ -45,9 +47,9 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="allow")
 
 
-@lru_cache()
+@lru_cache
 def get_settings() -> Settings:
-    """Cached settings instance"""
+    """Cache settings instance."""
     return Settings()
 
 
