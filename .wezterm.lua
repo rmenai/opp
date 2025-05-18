@@ -8,7 +8,7 @@ end
 
 local function main(win, gui)
 	win:spawn_tab({ args = sh("yazi") })
-	win:spawn_tab({ args = sh("devenv up") })
+	-- win:spawn_tab({ args = sh("devenv up") })
 end
 
 for _, win in ipairs(mux.all_windows()) do

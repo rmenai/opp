@@ -28,5 +28,7 @@ jobs:
 
       - name: Run tests
         run: |
+          cp .env.example .env.test
+          (cd backend && ./scripts/extract_supabase_key.sh)
           source .env.test
           devenv test

@@ -9,5 +9,6 @@ devenv.local.nix
 .pre-commit-config.yaml
 
 .ruff_cache
-.env.*
+.env.test
+.env.dev
 .env
