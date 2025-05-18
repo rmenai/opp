@@ -33,5 +33,7 @@ jobs:
 
       - name: Run tests
         run: |
+          set -a
           source .env.test
+          set +a
           devenv test
