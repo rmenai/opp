@@ -20,14 +20,13 @@ in {
 
   config = {
     env = {
-      GREET = "devenv";
-
       PLAYWRIGHT_BROWSERS_PATH = "${pkgs-playwright.playwright.browsers}";
       PLAYWRIGHT_SKIP_VALIDATE_HOST_REQUIREMENTS = true;
       PLAYWRIGHT_NODEJS_PATH = "${pkgs.nodejs}/bin/node";
       PLAYWRIGHT_LAUNCH_OPTIONS_EXECUTABLE_PATH = "${pkgs-playwright.playwright.browsers}/chromium-${chromium-rev}/chrome-linux/chrome";
     };
 
+    dotenv.disableHint = true;
     devcontainer.enable = true;
     difftastic.enable = true;
 
@@ -38,6 +37,24 @@ in {
       redis
       zlib
     ];
+
+    git-hooks.hooks = {
+      actionlint.enable = true;
+      check-added-large-files.enable = true;
+      check-json.enable = true;
+      check-merge-conflicts.enable = true;
+      check-yaml.enable = true;
+      commitizen.enable = true;
+      end-of-file-fixer.enable = true;
+      eslint.enable = true;
+      hadolint.enable = true;
+      ripsecrets.enable = true;
+      ruff.enable = true;
+      ruff-format.enable = true;
+      shellcheck.enable = true;
+      trim-trailing-whitespace.enable = true;
+      typos.enable = true;
+    };
 
     languages = {
       python = lib.mkIf (config.profile == "backend" || config.profile == "full") {
@@ -68,24 +85,6 @@ in {
           install.enable = true;
         };
       };
-    };
-
-    git-hooks.hooks = {
-      actionlint.enable = true;
-      check-added-large-files.enable = true;
-      check-json.enable = true;
-      check-merge-conflicts.enable = true;
-      check-yaml.enable = true;
-      commitizen.enable = true;
-      end-of-file-fixer.enable = true;
-      eslint.enable = true;
-      hadolint.enable = true;
-      ripsecrets.enable = true;
-      ruff.enable = true;
-      ruff-format.enable = true;
-      shellcheck.enable = true;
-      trim-trailing-whitespace.enable = true;
-      typos.enable = true;
     };
 
     services = lib.mkIf (config.profile == "backend" || config.profile == "full") {
@@ -130,6 +129,11 @@ in {
         };
       };
     };
+
+    enterShell = ''
+      echo "Active Profile: ${config.profile}"
+      echo "Active Testing: $TEST"
+    '';
 
     # enterTest = ''
     #   cd backend && poe test

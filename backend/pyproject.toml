@@ -28,9 +28,9 @@ test = "coverage run -m pytest tests/"
 report = "coverage report"
 lint = "pre-commit run --all-files"
 api = "python -m app"
-supabase = "supabase start"
-celery = "celery -A app.worker.celery worker --loglevel=info"
-flower = "celery -A app.worker.celery flower --port=5555"
+supabase = "./scripts/run_supabase.sh"
+celery = "celery -A app.worker.celery worker -l INFO"
+flower = "celery -A app.worker.celery flower --port=$FLOWER_PORT"
 
 [tool.ruff]
 line-length = 120

@@ -10,3 +10,4 @@ devenv.local.nix
 
 .ruff_cache
 .env.*
+.env

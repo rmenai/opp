@@ -151,3 +151,12 @@ tempCodeRunnerFile.py
 tempCodeRunnerFile.python
 
 old/
+
+# Supabase
+.branches
+.temp
+
+# dotenvx
+.env.keys
+.env.local
+.env.*.local

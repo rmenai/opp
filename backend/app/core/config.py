@@ -15,7 +15,7 @@ class API(BaseSettings):
     host: str = "127.0.0.1"
     port: int = 8080
 
-    model_config = SettingsConfigDict(env_prefix="API_", env_file=".env", extra="allow")
+    model_config = SettingsConfigDict(env_prefix="API_", extra="allow")
 
 
 class SupaBase(BaseSettings):
@@ -24,7 +24,7 @@ class SupaBase(BaseSettings):
     url: str = ""
     key: SecretStr = SecretStr("")
 
-    model_config = SettingsConfigDict(env_prefix="SUPABASE_", env_file=".env", extra="allow")
+    model_config = SettingsConfigDict(env_prefix="SUPABASE_", extra="allow")
 
 
 class Celery(BaseSettings):
