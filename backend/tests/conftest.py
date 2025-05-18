@@ -6,9 +6,7 @@ from http import HTTPStatus
 import httpx
 import pytest
 
-from app.core import settings
-
-BASE_URL = f"http://{settings.api.host}:{settings.api.port}/{settings.api.endpoint.strip('/')}"
+from tests.settings import BASE_API_URL
 
 
 def pytest_sessionstart(session: pytest.Session) -> None:
@@ -23,7 +21,7 @@ def pytest_sessionstart(session: pytest.Session) -> None:
     interval = 1.0
     start = time.time()
 
-    client = httpx.Client(base_url=BASE_URL, timeout=3.0)
+    client = httpx.Client(base_url=BASE_API_URL, timeout=3.0)
     last_exc = None
 
     while time.time() - start < timeout:
@@ -48,5 +46,5 @@ def pytest_sessionstart(session: pytest.Session) -> None:
 @pytest.fixture(scope="module")
 def client() -> httpx.Client:
     """Return a real HTTP client pointing to the live API."""
-    with httpx.Client(base_url=BASE_URL, timeout=5.0) as client:
+    with httpx.Client(base_url=BASE_API_URL, timeout=5.0) as client:
         yield client
