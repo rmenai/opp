@@ -2,6 +2,6 @@
 set -euo pipefail
 
 if [ "${TEST:-0}" = "1" ]; then
-  (cd backend && poe test) || true
-  (cd frontend && bun run test:unit:ci) || true
+  (cd backend && poe test)
+  (cd frontend && bun run test:unit:ci)
 fi

@@ -96,7 +96,7 @@ def create_session(
     )
 
 
-@router.get("/")
+@router.get("/sessions")
 async def list_sessions(
     current_user: Annotated[User, Depends(get_user)],
     supabase: Annotated[Client, Depends(get_supabase)],
@@ -120,7 +120,7 @@ async def list_sessions(
     return []  # Return empty list if no sessions or if response.data is None/empty
 
 
-@router.get("/{session_id}")
+@router.get("/sessions/{session_id}")
 async def get_processing_session_details(
     current_user: Annotated[User, Depends(get_user)],
     supabase: Annotated[Client, Depends(get_supabase)],

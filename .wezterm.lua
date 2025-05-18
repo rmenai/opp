@@ -3,7 +3,7 @@ local mux = wezterm.mux
 local workspace = mux.get_active_workspace()
 
 local function sh(cmd)
-	return { "zsh", "-c", cmd .. "; exec zsh" }
+	return { "zsh", "-ic", cmd .. "; exec zsh" }
 end
 
 local function main(win, gui)

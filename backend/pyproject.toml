@@ -8,6 +8,7 @@ dependencies = [
     "celery[redis]>=5.5.2",
     "fastapi[standard]>=0.115.12",
     "flower>=2.0.1",
+    "httpx>=0.28.1",
     "poethepoet>=0.34.0",
     "pydantic>=2.11.4",
     "pydantic-settings>=2.9.1",
@@ -24,11 +25,12 @@ dev = [
 ]
 
 [tool.poe.tasks]
+api = "python -m app"
 test = "coverage run -m pytest tests/"
 report = "coverage report"
 lint = "pre-commit run --all-files"
-api = "python -m app"
 supabase = "./scripts/run_supabase.sh"
+redis = "redis-server"
 celery = "celery -A app.worker.celery worker -l INFO"
 flower = "celery -A app.worker.celery flower --port=$FLOWER_PORT"
 
@@ -37,4 +39,4 @@ line-length = 120
 
 [tool.ruff.lint]
 select = ["ALL"]
-ignore = ["D203", "D212"]
+ignore = ["D203", "D212", "S101"]

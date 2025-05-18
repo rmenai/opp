@@ -23,6 +23,10 @@ trap cleanup SIGINT SIGTERM EXIT
 echo "Starting Supabase ($ENVIRONMENT_MODE environment) using workdir: $SUPABASE_WORKDIR..."
 supabase start --workdir "$SUPABASE_WORKDIR"
 
+# if [ "${TEST:-0}" = "1" ]; then
+#   supabase db reset --workdir "$SUPABASE_WORKDIR"
+# fi
+
 echo "Supabase ($ENVIRONMENT_MODE environment) services initiated from $SUPABASE_WORKDIR."
 echo "Keeping script alive to manage instance."
 echo "Press Ctrl+C in this terminal (if run directly) or send SIGTERM via process-compose to stop."
