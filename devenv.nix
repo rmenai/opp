@@ -130,13 +130,13 @@ in {
       };
     };
 
+    scripts.supabase_extract_key.exec = ''
+      cd backend && ./scripts/extract_supabase_key.sh
+    '';
+
     enterShell = ''
       echo "Active Profile: ${config.profile}"
       echo "Active Testing: $TEST"
     '';
-
-    # enterTest = ''
-    #   cd backend && poe test
-    # '';
   };
 }

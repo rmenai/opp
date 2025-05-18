@@ -26,5 +26,14 @@ jobs:
       - name: Install devenv.sh
         run: nix profile install nixpkgs#devenv
 
+      - name: Extract supabase service key
+        run: |
+          cp .env.example .env.test
+          devenv shell supabase_extract_key
+
       - name: Run tests
-        run: devenv test
+        run: |
+          set -a
+          source .env.test
+          set +a
+          devenv test

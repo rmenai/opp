@@ -5,14 +5,36 @@ from typing import Literal
 from pydantic import BaseModel
 
 
+class SupabaseStatus(BaseModel):
+    """Supabase status."""
+
+    db: Literal["ok", "error"]
+    auth: Literal["ok", "error"]
+    storage: Literal["ok", "error"]
+
+
+class ServicesStatus(BaseModel):
+    """Service status."""
+
+    supabase: SupabaseStatus
+    celery: Literal["ok", "error"]
+
+
+class HealthCheckResponse(BaseModel):
+    """Health check response."""
+
+    status: Literal["ok", "error"]
+    services: ServicesStatus
+
+
 class SyncRequest(BaseModel):
-    """SyncRequest."""
+    """Sync request."""
 
     client_ns: int
 
 
 class SyncResponse(BaseModel):
-    """SyncResponse."""
+    """Sync response."""
 
     client_ns: int
     server_recv_ns: int

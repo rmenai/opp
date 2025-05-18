@@ -44,7 +44,7 @@ class Settings(BaseSettings):
     supabase: SupaBase = SupaBase()
     celery: Celery = Celery()
 
-    model_config = SettingsConfigDict(env_file=".env", extra="allow")
+    model_config = SettingsConfigDict(extra="allow")
 
 
 @lru_cache
