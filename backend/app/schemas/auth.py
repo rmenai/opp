@@ -1,7 +1,7 @@
 """Schemas for handling authentication."""
 
 import datetime
-from uuid import UUID
+import uuid
 
 from pydantic import BaseModel, EmailStr
 
@@ -22,6 +22,17 @@ class RegisterResponse(BaseModel):
     token_type: str = "bearer"  # noqa: S105
 
 
+class UserProfileUpdate(BaseModel):
+    """User profile update."""
+
+    language: str | None = "en"
+    keyboard_layout: str | None = "QWERTY"
+
+    model_config = {
+        "extra": "forbid",
+    }
+
+
 class UserProfileResponse(BaseModel):
     """User profile response."""
 
@@ -33,15 +44,8 @@ class UserProfileResponse(BaseModel):
 class UserProfileCreate(BaseModel):
     """User profile create."""
 
-    user_id: UUID
+    user_id: uuid.UUID
     created_at: datetime.datetime
     updated_at: datetime.datetime
-    language: str | None = "en"
-    keyboard_layout: str | None = "QWERTY"
-
-
-class UserProfileUpdate(BaseModel):
-    """User profile update."""
-
     language: str | None = "en"
     keyboard_layout: str | None = "QWERTY"
