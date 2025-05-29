@@ -1,5 +1,5 @@
 """Required init file."""
 
-from app.worker.celery import app
+from app.core.celery import app
 
 __all__ = ["app"]
