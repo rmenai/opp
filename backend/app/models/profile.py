@@ -1,4 +1,4 @@
-"""Degine User model."""
+"""Define User model."""
 
 import datetime
 import uuid
