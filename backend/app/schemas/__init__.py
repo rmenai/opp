@@ -8,7 +8,7 @@ from app.schemas.auth import (
     UserProfileResponse,
     UserProfileUpdate,
 )
-from app.schemas.session import SessionCreationRequest, SessionResponse, SessionStatus, SessionType
+from app.schemas.session import SessionCreationRequest, SessionResponse
 from app.schemas.status import (
     Ack,
     HealthCheckResponse,
@@ -23,7 +23,7 @@ from app.schemas.status import (
 __all__ = []
 
 __all__ += ["AudioChunk", "AudioChunkResponse", "AudioChunkResult"]
-__all__ += ["SessionCreationRequest", "SessionResponse", "SessionStatus", "SessionType"]
+__all__ += ["SessionCreationRequest", "SessionResponse"]
 __all__ += [
     "Ack",
     "HealthCheckResponse",

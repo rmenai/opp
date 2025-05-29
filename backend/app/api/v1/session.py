@@ -8,7 +8,7 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 from gotrue import User
 
-from app import schemas
+from app import models, schemas
 from app.api.deps import get_supabase, get_user
 from supabase import Client
 
@@ -37,7 +37,7 @@ def create_session(
         "session_id": str(session_id),
         "user_id": str(user.id),
         "type": session_create_request.type.value,
-        "status": schemas.SessionStatus.PENDING.value,
+        "status": models.SessionStatus.PENDING.value,
         "metadata": session_create_request.metadata,
         "created_at": now.isoformat(),
         "updated_at": now.isoformat(),
@@ -69,7 +69,7 @@ async def list_sessions(
         supabase.table("sessions")
         .select("*")
         .eq("user_id", str(user.id))
-        .neq("status", "closed")
+        .neq("status", models.SessionStatus.CLOSED.value)
         .order("created_at", desc=True)
         .offset(skip)
         .limit(limit)
@@ -125,7 +125,7 @@ async def close_session(
     """Mark a session as closed instead of deleting it."""
     response = (
         supabase.table("sessions")
-        .update({"status": "closed"})
+        .update({"status": models.SessionStatus.CLOSED.value})
         .eq("session_id", str(session_id))
         .eq("user_id", str(user.id))
         .execute()
