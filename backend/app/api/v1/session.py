@@ -84,11 +84,14 @@ async def list_sessions(
 
 @router.get("/sessions/{session_id}")
 async def get_session_details(
+    user: Annotated[User, Depends(get_user)],
     supabase: Annotated[Client, Depends(get_supabase)],
     session_id: Annotated[uuid.UUID, Path(description="The ID of the session to retrieve")],
 ) -> schemas.SessionResponse:
     """Get details of a specific processing session."""
-    response = supabase.table("sessions").select("*").eq("session_id", str(session_id)).execute()
+    response = (
+        supabase.table("sessions").select("*").eq("session_id", str(session_id)).eq("user_id", str(user.id)).execute()
+    )
 
     if not response.data:
         raise HTTPException(status_code=404, detail="Session not found")
@@ -98,25 +101,35 @@ async def get_session_details(
 
 @router.delete("/sessions/{session_id}")
 async def delete_session(
+    user: Annotated[User, Depends(get_user)],
     supabase: Annotated[Client, Depends(get_supabase)],
     session_id: Annotated[uuid.UUID, Path(description="The ID of the session to retrieve")],
 ) -> dict:
     """Close a specific processing session."""
-    response = supabase.table("sessions").delete().eq("session_id", str(session_id)).execute()
+    response = (
+        supabase.table("sessions").delete().eq("session_id", str(session_id)).eq("user_id", str(user.id)).execute()
+    )
 
     if not response.data:
-        raise HTTPException(status_code=404, detail="Failed to delete session or already deleted")
+        raise HTTPException(status_code=404, detail="Session not found or already deleted")
 
     return {"detail": "Session deleted successfully"}
 
 
 @router.post("/sessions/{session_id}/close")
 async def close_session(
+    user: Annotated[User, Depends(get_user)],
     supabase: Annotated[Client, Depends(get_supabase)],
     session_id: Annotated[uuid.UUID, Path(description="The ID of the session to close")],
 ) -> dict:
     """Mark a session as closed instead of deleting it."""
-    response = supabase.table("sessions").update({"status": "closed"}).eq("session_id", str(session_id)).execute()
+    response = (
+        supabase.table("sessions")
+        .update({"status": "closed"})
+        .eq("session_id", str(session_id))
+        .eq("user_id", str(user.id))
+        .execute()
+    )
 
     if not response.data:
         raise HTTPException(status_code=404, detail="Session not found or already closed")
