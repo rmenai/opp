@@ -3,57 +3,18 @@
 import datetime
 import logging
 import uuid
-from typing import Annotated, Any
+from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException, Path, Query, status
 from gotrue import User
 
 from app import schemas
 from app.api.deps import get_supabase, get_user
-from supabase import Client, PostgrestAPIResponse
+from supabase import Client
 
 log = logging.getLogger(__name__)
 
 router = APIRouter()
-
-
-async def get_session_or_404(
-    session_id: uuid.UUID,
-    user_id: str,
-    supabase: Client,
-) -> dict[str, Any]:
-    """
-    Fetch a session by ID for a given user_id.
-
-    Raises HTTPException 404 if not found or not owned by the user.
-    """
-    session_response: PostgrestAPIResponse = (
-        supabase.table("sessions")
-        .select("*")
-        .eq("session_id", str(session_id))
-        .eq("user_id", user_id)
-        .single()
-        .execute()
-    )
-    if not session_response.data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Session not found or access denied.")
-
-    return session_response.data
-
-
-async def update_session_status(
-    session_id: uuid.UUID,
-    new_status: schemas.SessionStatus,
-    supabase: Client,
-) -> dict[str, Any]:
-    """Update the status of a session."""
-    now = datetime.datetime.now(datetime.UTC)
-    (
-        supabase.table("sessions")
-        .update({"status": new_status.value, "updated_at": now.isoformat()})
-        .eq("session_id", str(session_id))
-        .execute()
-    )
 
 
 @router.post("/sessions")
@@ -61,7 +22,7 @@ def create_session(
     user: Annotated[User, Depends(get_user)],
     supabase: Annotated[Client, Depends(get_supabase)],
     session_create_request: schemas.SessionCreationRequest,
-) -> schemas.SessionCreationResponse:
+) -> schemas.SessionResponse:
     """
     Create a new audio processing session (for file or stream).
 
@@ -83,11 +44,11 @@ def create_session(
     }
 
     log.debug("Creating session for user %s with data: %s", user.id, session_data)
-    response: PostgrestAPIResponse = supabase.table("sessions").insert(session_data).execute()
+    response = supabase.table("sessions").insert(session_data).execute()
 
     if response.data:
         created_session = response.data[0]
-        return schemas.SessionCreationResponse(**created_session)
+        return schemas.SessionResponse(**created_session)
 
     log.error("Failed to create session for user %s", user.id)
     raise HTTPException(
@@ -98,16 +59,17 @@ def create_session(
 
 @router.get("/sessions")
 async def list_sessions(
-    current_user: Annotated[User, Depends(get_user)],
+    user: Annotated[User, Depends(get_user)],
     supabase: Annotated[Client, Depends(get_supabase)],
     skip: Annotated[int, Query(ge=0, description="Number of records to skip for pagination")] = 0,
     limit: Annotated[int, Query(ge=1, le=100, description="Maximum number of records to return")] = 10,
-) -> list[schemas.SessionCreationResponse]:
+) -> list[schemas.SessionResponse]:
     """List all processing sessions for the authenticated user (paginated)."""
-    response: PostgrestAPIResponse = (
+    response = (
         supabase.table("sessions")
         .select("*")
-        .eq("user_id", str(current_user.id))
+        .eq("user_id", str(user.id))
+        .neq("status", "closed")
         .order("created_at", desc=True)
         .offset(skip)
         .limit(limit)
@@ -115,21 +77,48 @@ async def list_sessions(
     )
 
     if response.data:
-        return [schemas.SessionCreationResponse(**session_data) for session_data in response.data]
+        return [schemas.SessionResponse(**session_data) for session_data in response.data]
 
     return []  # Return empty list if no sessions or if response.data is None/empty
 
 
 @router.get("/sessions/{session_id}")
-async def get_processing_session_details(
-    current_user: Annotated[User, Depends(get_user)],
+async def get_session_details(
     supabase: Annotated[Client, Depends(get_supabase)],
     session_id: Annotated[uuid.UUID, Path(description="The ID of the session to retrieve")],
-) -> schemas.SessionCreationResponse:
-    """
-    Get details of a specific processing session.
+) -> schemas.SessionResponse:
+    """Get details of a specific processing session."""
+    response = supabase.table("sessions").select("*").eq("session_id", str(session_id)).execute()
 
-    Ensures the session belongs to the authenticated user.
-    """
-    session_data = await get_session_or_404(session_id, str(current_user.id), supabase)
-    return schemas.SessionCreationResponse(**session_data)
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Session not found")
+
+    return schemas.SessionResponse(**response.data[0])
+
+
+@router.delete("/sessions/{session_id}")
+async def delete_session(
+    supabase: Annotated[Client, Depends(get_supabase)],
+    session_id: Annotated[uuid.UUID, Path(description="The ID of the session to retrieve")],
+) -> dict:
+    """Close a specific processing session."""
+    response = supabase.table("sessions").delete().eq("session_id", str(session_id)).execute()
+
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Failed to delete session or already deleted")
+
+    return {"detail": "Session deleted successfully"}
+
+
+@router.post("/sessions/{session_id}/close")
+async def close_session(
+    supabase: Annotated[Client, Depends(get_supabase)],
+    session_id: Annotated[uuid.UUID, Path(description="The ID of the session to close")],
+) -> dict:
+    """Mark a session as closed instead of deleting it."""
+    response = supabase.table("sessions").update({"status": "closed"}).eq("session_id", str(session_id)).execute()
+
+    if not response.data:
+        raise HTTPException(status_code=404, detail="Session not found or already closed")
+
+    return {"detail": "Session closed successfully"}
