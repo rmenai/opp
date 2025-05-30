@@ -6,7 +6,7 @@ from http import HTTPStatus
 import httpx
 import pytest
 
-from tests.settings import BASE_API_URL
+from tests.settings import BASE_API_URL, EMAIL, PASSWORD
 
 
 def pytest_sessionstart(session: pytest.Session) -> None:
@@ -48,3 +48,21 @@ def client() -> httpx.Client:
     """Return a real HTTP client pointing to the live API."""
     with httpx.Client(base_url=BASE_API_URL, timeout=5.0) as client:
         yield client
+
+
+@pytest.fixture(scope="module")
+def auth_headers(client: httpx.Client) -> dict[str, str]:
+    """Return the authentication headers for the test account."""
+    login_payload = {"username": EMAIL, "password": PASSWORD}
+
+    resp = client.post("/auth/login", data=login_payload)
+
+    if resp.status_code != HTTPStatus.OK:
+        resp = client.post("/auth/register", data=login_payload)
+
+    assert resp.status_code == HTTPStatus.OK
+    data = resp.json()
+    token = data["access_token"]
+    assert token, "Login did not return an access_token"
+
+    return {"Authorization": f"Bearer {token}"}

@@ -1,28 +1,12 @@
 """Schemas for recording sessions."""
 
 import datetime
-from enum import Enum
+import uuid
 from typing import Any
 
 from pydantic import BaseModel, Field
 
-
-class SessionType(str, Enum):
-    """Available session types."""
-
-    FILE = "file"
-    STREAM = "stream"
-
-
-class SessionStatus(str, Enum):
-    """Available session statuses."""
-
-    PENDING = "pending"
-    ACTIVE = "active"
-    PROCESSING = "processing"
-    COMPLETED = "completed"
-    FAILED = "failed"
-    PARTIAL = "partial"  # Stream ended, some results might be available
+from app.models.session import SessionStatus, SessionType
 
 
 class SessionCreationRequest(BaseModel):
@@ -35,11 +19,11 @@ class SessionCreationRequest(BaseModel):
     )
 
 
-class SessionCreationResponse(BaseModel):
+class SessionResponse(BaseModel):
     """Session creation response."""
 
-    session_id: str
-    user_id: str
+    session_id: uuid.UUID
+    user_id: uuid.UUID
     type: SessionType
     status: SessionStatus = SessionStatus.PENDING
     metadata: dict[str, Any] | None = None

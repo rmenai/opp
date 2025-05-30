@@ -9,25 +9,33 @@ from gotrue import User
 from httpx import HTTPError
 
 from app.core import settings
-from app.supabase.session import supabase
-from app.worker import app as celery_app
+from app.core.celery import app as celery_app
+from app.core.supabase import create_supabase
 from supabase import AuthApiError, Client
+
+log = logging.getLogger(__name__)
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl=f"{settings.api.endpoint}/auth/login",
     scheme_name="JWT",
 )
 
-log = logging.getLogger(__name__)
-
 
 def get_supabase() -> Client:
     """Return the supabase instance, handling potential errors."""
+    supabase: Client = create_supabase()
+
     try:
-        return supabase
+        yield supabase
     except AuthApiError as e:
         log.exception("Supabase Auth API Error: %s (Status: %s)", e.message, e.status)
-        raise HTTPException(status_code=e.status or 400, detail=e.message) from e
+
+        match e.message:
+            case "Invalid login credentials":
+                raise HTTPException(status_code=401, detail=e.message) from e
+            case _:
+                raise HTTPException(status_code=400, detail=e.message) from e
+
     except HTTPError as e:
         log.exception("HTTP Error communicating with Supabase")
         raise HTTPException(status_code=502, detail="Authentication service unavailable; please try again later") from e
@@ -35,6 +43,7 @@ def get_supabase() -> Client:
 
 def get_user(token: str = Depends(oauth2_scheme)) -> User:
     """Return the authenticated user."""
+    supabase: Client = create_supabase()
     user = supabase.auth.get_user(token)
 
     if not user:
