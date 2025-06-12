@@ -1,0 +1,50 @@
+[project]
+name = "cli"
+version = "0.1.0"
+description = "Transform your keystrokes back into text."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "audiomentations>=0.33.0",
+    "evdev>=1.9.2",
+    "jellyfish>=1.2.0",
+    "librosa>=0.8.0",
+    "matplotlib>=3.10.3",
+    "noisereduce>=3.0.3",
+    "numpy>=2.2.6",
+    "onnx>=1.18.0",
+    "onnxruntime>=1.22.0",
+    "poethepoet>=0.34.0",
+    "pygame>=2.6.1",
+    "scikit-learn>=1.6.1",
+    "scipy>=1.15.3",
+    "sounddevice>=0.5.2",
+    "soundfile>=0.13.1",
+    "torch>=2.7.1",
+    "torchaudio>=2.7.1",
+    "torchvision>=0.22.1",
+    "tqdm>=4.67.1",
+    "typer>=0.16.0",
+    "wordfreq>=3.1.1",
+]
+
+[dependency-groups]
+dev = [
+    "coverage>=7.8.2",
+    "pytest>=8.3.5",
+    "ruff>=0.11.12",
+]
+
+[tool.poe.tasks]
+cli = "python -m app"
+test = "coverage run -m pytest tests/"
+report = "coverage report"
+lint = "pre-commit run --all-files"
+
+[tool.ruff]
+line-length = 120
+exclude = ["backup"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["D", "FBT", "PLR", "S101", "ANN201", "T201", "BLE001", "N806", "C901", "COM812"]

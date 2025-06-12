@@ -160,4 +160,15 @@ old/
 # dotenvx
 .env.keys
 .env.local
+.env.test
 .env.*.local
+
+# Devenv
+.devenv*
+devenv.local.nix
+
+# direnv
+.direnv
+
+# pre-commit
+.pre-commit-config.yaml

@@ -2,14 +2,4 @@ inputs:
   nixpkgs:
     url: github:cachix/devenv-nixpkgs/rolling
 
-  nixpkgs-unstable:
-    url: github:NixOS/nixpkgs/nixos-unstable
-
-  nixpkgs-python:
-    url: github:cachix/nixpkgs-python
-    inputs:
-      nixpkgs:
-        follows: nixpkgs
-
-  nixpkgs-playwright:
-    url: github:NixOS/nixpkgs/979daf34c8cacebcd917d540070b52a3c2b9b16e
+allowUnfree: true
