@@ -117,7 +117,3 @@ def main():
     )
 
     print(f"Saved dataset with {len(samples)} samples to '{dataset_filename}'")
-
-
-if __name__ == "__main__":
-    main()

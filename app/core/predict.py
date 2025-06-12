@@ -12,8 +12,6 @@ import numpy as np
 import pygame
 import soundfile as sf
 import torch
-from record import AudioRecorder
-from train import KeystrokeCNN
 
 from app.core.config import (
     AUDIO_DIR,
@@ -25,6 +23,8 @@ from app.core.config import (
     SAMPLE_RATE,
     WINDOW_TIME,
 )
+from app.core.record import AudioRecorder
+from app.core.train import KeystrokeCNN
 from app.utils import compute_log_mel_spectrogram
 
 ColorValue = tuple[int, int, int] | pygame.Color
@@ -129,29 +129,45 @@ KEY_VISUAL_LAYOUT = [
 # --- INITIALIZATION
 # ==============================================================================
 
-mpl.use("TkAgg")
-pygame.init()
-
-# --- Fonts ---
-FONT_LARGE = pygame.font.Font(None, FONT_SIZE_LARGE)
-FONT_MEDIUM = pygame.font.Font(None, FONT_SIZE_MEDIUM)
-FONT_SMALL = pygame.font.Font(None, FONT_SIZE_SMALL)
 
 # --- Dynamically Calculated Layout Constants ---
-PREDICTION_DISPLAY_Y = (
-    KEYBOARD_START_Y
-    - CAROUSEL_MARGIN_ABOVE_KEYBOARD
-    - FONT_SMALL.get_height()
-    - INTER_LINE_SPACING
-    - FONT_MEDIUM.get_height()
-)
 _keyboard_rows = 4
 _spacebar_row_height = KEY_HEIGHT + KEY_MARGIN
 _keyboard_block_height = _keyboard_rows * (KEY_HEIGHT + KEY_MARGIN) + _spacebar_row_height
 PREDICTION_TABLE_Y_OFFSET = KEYBOARD_START_Y + _keyboard_block_height + 50
 
-screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+# --- Fonts ---
+FONT_LARGE = None
+FONT_MEDIUM = None
+FONT_SMALL = None
+
+PREDICTION_DISPLAY_Y = None
+
+screen = None
 pygame.display.set_caption("Keystroke Prediction")
+
+
+def init():
+    global FONT_LARGE, FONT_MEDIUM, FONT_SMALL, PREDICTION_DISPLAY_Y, screen  # noqa: PLW0603
+    mpl.use("TkAgg")
+    pygame.init()
+
+    FONT_LARGE = pygame.font.Font(None, FONT_SIZE_LARGE)
+    FONT_MEDIUM = pygame.font.Font(None, FONT_SIZE_MEDIUM)
+    FONT_SMALL = pygame.font.Font(None, FONT_SIZE_SMALL)
+
+    # --- Dynamically Calculated Layout Constants ---
+    PREDICTION_DISPLAY_Y = (
+        KEYBOARD_START_Y
+        - CAROUSEL_MARGIN_ABOVE_KEYBOARD
+        - FONT_SMALL.get_height()
+        - INTER_LINE_SPACING
+        - FONT_MEDIUM.get_height()
+    )
+
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    pygame.display.set_caption("Keystroke Prediction")
+
 
 # ==============================================================================
 # --- CORE CLASSES & FUNCTIONS
@@ -670,6 +686,8 @@ class Predictor:
 
 
 async def main() -> None:
+    init()
+
     predictor = Predictor()
     keyboard = Keyboard()
     clock = pygame.time.Clock()
@@ -723,10 +741,3 @@ async def main() -> None:
     pygame.quit()
     sys.exit()
     print("Exiting program.")
-
-
-if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        print("\nProgram interrupted by user. Exiting.")

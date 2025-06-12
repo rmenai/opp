@@ -4,7 +4,6 @@ When any key is pressed, audio recording starts and all subsequent key events ar
 Pressing ESC stops the recording and saves both the audio (as a WAV file) and the keyboard events (as a text file).
 """
 
-import asyncio
 import json
 import threading
 import time
@@ -130,10 +129,3 @@ async def main():
         json.dump(data, f, indent=2)
 
     print(f"Keyboard events saved to {OUTPUT_FILENAME}.json file")
-
-
-if __name__ == "__main__":
-    try:
-        asyncio.run(main())
-    except KeyboardInterrupt:
-        print("Exiting program.")

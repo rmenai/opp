@@ -424,7 +424,3 @@ def main():
             indent=4,
         )
     print(f"Model metadata saved to: {metadata_path}")
-
-
-if __name__ == "__main__":
-    main()

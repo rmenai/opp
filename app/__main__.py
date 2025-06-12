@@ -1,19 +1,48 @@
+import asyncio
+
 import typer
 
 app = typer.Typer()
 
 
 @app.command()
-def hello(name: str):
-    print(f"Hello {name}")
+def record():
+    from app.core.record import main as main_record
+
+    try:
+        asyncio.run(main_record())
+    except KeyboardInterrupt:
+        print("\nProgram interrupted by user. Exiting.")
 
 
 @app.command()
-def goodbye(name: str, formal: bool = False):
-    if formal:
-        print(f"Goodbye Ms. {name}. Have a good day.")
-    else:
-        print(f"Bye {name}!")
+def process():
+    from app.core.process import main
+
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nProgram interrupted by user. Exiting.")
+
+
+@app.command()
+def train():
+    from app.core.train import main
+
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nProgram interrupted by user. Exiting.")
+
+
+@app.command()
+def predict():
+    from app.core.predict import main
+
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print("\nProgram interrupted by user. Exiting.")
 
 
 if __name__ == "__main__":
