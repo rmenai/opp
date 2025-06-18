@@ -1,8 +1,6 @@
 # [OPP](./README.md) &middot; [![GitHub license]](./LICENSE) ![Test Action]
 
-Have you ever wanted to know what someone is typing just by listening to their
-keyboard? Well, now you can! You can now eavesdrop on somebody's typing just
-from the recording of their keys.
+This project explores the possibility of identifying what someone is typing by analyzing the sound produced by their keyboard. By processing audio recordings of keystrokes, it aims to demonstrate how patterns in the sounds can be used to infer the typed text.
 
 <!-- Table of Contents -->
 
