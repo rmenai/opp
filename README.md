@@ -1,4 +1,4 @@
-# [Operation Pele Password](./README.md) &middot; [![GitHub license]](./LICENSE) ![Test Action]
+# [OPP](./README.md) &middot; [![GitHub license]](./LICENSE) ![Test Action]
 
 Have you ever wanted to know what someone is typing just by listening to their
 keyboard? Well, now you can! You can now eavesdrop on somebody's typing just
